@@ -42,6 +42,9 @@ class LastFMDownloader(object):
         
         logger.info(u'LastFM: Searching for "{artist_name} - {album_name}"'.format(artist_name=self.artist_name, album_name=self.album_name))
         response = urllib.urlopen(self.url).read() # Send HTTP request to LastFM
+        start_index = response.index("<albummatches>")
+        end_index = response.index("</albummatches>") + len("</albummatches>")
+        response = response[start_index:end_index]
         xml_data = ETree.fromstring(response) # Read in XML data
 
         for element in xml_data.getiterator("album"):
