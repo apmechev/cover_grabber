@@ -24,19 +24,21 @@ https://github.com/toozej/cover_grabber which is a fork of https://github.com/ma
 
 ### Docker
 
-`docker run toozej/cover_grabber:latest <Media directory> [options]`
+    $ docker run toozej/cover_grabber:latest <Media directory> [options]
 
-Or if you would rather build the Docker image yourself: 
-1) `git clone https://github.com/toozej/cover_grabber && cd cover_grabber`
-2) `docker build -t <username>/cover_grabber:latest .`
+Or if you would rather build the Docker image yourself:
+
+    $ git clone https://github.com/toozej/cover_grabber && cd cover_grabber
+    $ docker build -t <username>/cover_grabber:latest .
 
 ### Manual install
 
 1) Install python-mutagen
 
-* Debian/Ubuntu: apt-get install python-mutagen
-* Fedora: yum install python-mutagen
-* Arch: pacman -Sy mutagen
+* Debian/Ubuntu: `apt-get install python-mutagen`
+* CentOS/RHEL: `yum install python-mutagen`
+* Fedora: `dnf install python-mutagen`
+* Arch: `pacman -Sy mutagen`
 
 2) Install covergrabber:
 
