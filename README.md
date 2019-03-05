@@ -13,7 +13,7 @@ https://sourceforge.net/projects/covergrabber/
 
 ## Source Code
 
-https://github.com/thedonvaughn/cover_grabber
+https://github.com/toozej/cover_grabber which is a fork of https://github.com/markojaadam/cover_grabber which is a fork of https://github.com/thedonvaughn/cover_grabber
 
 ## Requirements
 * Python
@@ -22,13 +22,23 @@ https://github.com/thedonvaughn/cover_grabber
 
 ## Install
 
-1). Install python-mutagen
+### Docker
+
+`docker run toozej/cover_grabber:latest <Media directory> [options]`
+
+Or if you would rather build the Docker image yourself: 
+1) `git clone https://github.com/toozej/cover_grabber && cd cover_grabber`
+2) `docker build -t <username>/cover_grabber:latest .`
+
+### Manual install
+
+1) Install python-mutagen
 
 * Debian/Ubuntu: apt-get install python-mutagen
 * Fedora: yum install python-mutagen
 * Arch: pacman -Sy mutagen
 
-2). Install covergrabber:
+2) Install covergrabber:
 
     $ python setup.py install
 
