@@ -34,7 +34,6 @@ Or if you would rather build the Docker image yourself:
 ### Manual install
 
 1) Install python-mutagen
-
 * Debian/Ubuntu: `apt-get install python-mutagen`
 * CentOS/RHEL: `yum install python-mutagen`
 * Fedora: `dnf install python-mutagen`
@@ -42,7 +41,7 @@ Or if you would rather build the Docker image yourself:
 
 2) Install covergrabber
 
-    $ python setup.py install
+        $ python setup.py install
 
 ## Howto Use
 
