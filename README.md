@@ -40,7 +40,7 @@ Or if you would rather build the Docker image yourself:
 * Fedora: `dnf install python-mutagen`
 * Arch: `pacman -Sy mutagen`
 
-2) Install covergrabber:
+2) Install covergrabber
 
     $ python setup.py install
 
