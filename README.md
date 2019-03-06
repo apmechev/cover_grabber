@@ -24,7 +24,7 @@ https://github.com/toozej/cover_grabber which is a fork of https://github.com/ma
 
 ### Docker
 
-    $ docker run toozej/cover_grabber:latest <Media directory> [options]
+    $ docker run -v <Media directory>:/music toozej/cover_grabber:latest /music [options]
 
 Or if you would rather build the Docker image yourself:
 
@@ -57,4 +57,8 @@ For example:
 
 ------
 
+Original project:
 (c) 2011 - Jayson Vaughn (vaughn.jayson@gmail.com)
+
+Docker-related additions: 
+2019 - toozej

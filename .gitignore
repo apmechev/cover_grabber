@@ -19,3 +19,4 @@ dist
 *.pyo
 *.tmp*
 ChangeLog
+venv
