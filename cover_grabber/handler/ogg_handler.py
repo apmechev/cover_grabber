@@ -21,26 +21,37 @@ from cover_grabber.logging.config import logger
 
 class OGGHandler(Handler):
     def __init__(self, dirname, filenames):
-        """ Initialize OGGHandler """
-        super(OGGHandler, self).__init__(dirname, filenames)
+        """Initialize OGGHandler"""
+        super().__init__(dirname, filenames)
 
-        # Create audio_files list from the filenames list by filtering for only ogg files 
-        self.audio_files = [os.path.join(dirname, file) for file in filenames if ".ogg" in file]
+        self.audio_files = [
+            os.path.join(dirname, filename)
+            for filename in filenames
+            if filename.lower().endswith(".ogg")
+        ]
 
     def get_album_and_artist(self):
-        """ Return Ogg tags for album and artist"""
+        """Return Ogg tags for album and artist"""
 
         self.audio_files.sort()
 
-        for file in self.audio_files:
+        for filepath in self.audio_files:
             try:
-                tags = OggVorbis(file)
+                tags = OggVorbis(filepath)
                 if tags:
-                    if "album" in tags.keys() and "artist" in tags.keys():
-                        logger.debug(u'album -> {album}, artist -> {artist}'.format(album=tags["album"][0], artist=tags["artist"][0]))
-                        return (tags["album"][0], tags["artist"][0])
-                        break # If we found ID3 tag info from a file, no reason to query the rest in a directory.  
+                    if (
+                        "album" in tags and tags["album"]
+                        and "artist" in tags and tags["artist"]
+                    ):
+                        album = tags["album"][0]
+                        artist = tags["artist"][0]
+                        logger.debug(
+                            'album -> {album}, artist -> {artist}'.format(
+                                album=album, artist=artist
+                            )
+                        )
+                        return album, artist
             except mutagen.oggvorbis.OggVorbisHeaderError:
-                logger.error(u'No OggVorbis Header data found')
+                logger.error('No OggVorbis Header data found in file {}'.format(filepath))
                 continue
-        return (None, None)
+        return None, None

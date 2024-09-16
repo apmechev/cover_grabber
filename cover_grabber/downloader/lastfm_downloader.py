@@ -13,10 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import urllib
+import urllib.request
+import urllib.parse
 try:
     import xml.etree.cElementTree as ETree
-except:
+except ImportError:
     import xml.etree.ElementTree as ETree
 
 from cover_grabber.logging.config import logger
@@ -24,35 +25,45 @@ from cover_grabber.logging.config import logger
 
 class LastFMDownloader(object):
     def __init__(self, album_name, artist_name):
-        """ Initializes LastFM Downloader """
-
-        self.LASTFM_API_KEY = "a42ead6d2dcc2938bec2cda08a03b519" # Please use your OWN LastFM API key
-        self.LASTFM_URL = "http://ws.audioscrobbler.com/2.0/?method=album.search&album={album_name}&api_key=" + self.LASTFM_API_KEY
+        """Initializes LastFM Downloader"""
+        self.LASTFM_API_KEY = "a42ead6d2dcc2938bec2cda08a03b519"
+        self.LASTFM_URL = (
+            "http://ws.audioscrobbler.com/2.0/?method=album.search&album={album_name}&api_key="
+            + self.LASTFM_API_KEY
+        )
         self.album_name = album_name
         self.artist_name = artist_name
         self.url = self.format_url()
 
     def format_url(self):
-        """ Sanitize and format URL for Last FM search """
-        return self.LASTFM_URL.format(album_name=self.album_name.encode('utf8'))
-
+        """Sanitize and format URL for Last FM search"""
+        album_name_encoded = urllib.parse.quote(self.album_name)
+        return self.LASTFM_URL.format(album_name=album_name_encoded)
 
     def search_for_image(self):
-        """ Use LastFM's API to obtain a URL for the album cover art """
-        
-        logger.info(u'LastFM: Searching for "{artist_name} - {album_name}"'.format(artist_name=self.artist_name, album_name=self.album_name))
-        response = urllib.urlopen(self.url).read() # Send HTTP request to LastFM
-        start_index = response.index("<albummatches>")
-        end_index = response.index("</albummatches>") + len("</albummatches>")
-        response = response[start_index:end_index]
-        xml_data = ETree.fromstring(response) # Read in XML data
+        """Use LastFM's API to obtain a URL for the album cover art"""
+        logger.info(
+            'LastFM: Searching for "{artist_name} - {album_name}"'.format(
+                artist_name=self.artist_name, album_name=self.album_name
+            )
+        )
+        try:
+            response = urllib.request.urlopen(self.url).read()
+            response_str = response.decode("utf-8")
+            start_index = response_str.index("<albummatches>")
+            end_index = response_str.index("</albummatches>") + len("</albummatches>")
+            response_str = response_str[start_index:end_index]
+            xml_data = ETree.fromstring(response_str)
 
-        for element in xml_data.getiterator("album"):
-            if (element.find('artist').text.lower() == self.artist_name.lower().encode("utf-8")):
-                for elmnt in element.findall('image'):
-                    if (elmnt.attrib['size'] == 'extralarge'):
-                        url = elmnt.text
-                        if url:
-                            return url
-                        else:
-                            return None
+            for element in xml_data.iter("album"):
+                artist_text = element.find("artist").text
+                if artist_text and artist_text.lower() == self.artist_name.lower():
+                    for elmnt in element.findall("image"):
+                        if elmnt.attrib.get("size") == "extralarge":
+                            url = elmnt.text
+                            if url:
+                                return url
+            return None
+        except Exception as e:
+            logger.error("Error while searching for image: {}".format(e))
+            return None

@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 from cover_grabber.handler.mp3_handler import MP3Handler
 from cover_grabber.handler.ogg_handler import OGGHandler
 from cover_grabber.handler.flac_handler import FLACHandler

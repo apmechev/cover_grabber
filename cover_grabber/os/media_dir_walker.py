@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import urllib
+import urllib.request
 from cover_grabber.handler.handler_factory import HandlerFactory
 from cover_grabber.downloader.lastfm_downloader import LastFMDownloader
 from cover_grabber.logging.config import logger
@@ -29,8 +29,9 @@ class MediaDirWalker(object):
     def do_walk_path(self):
         """ Walk specified directory recursively.  Call self.process_dir() on each directory """
 
-        logger.info(u'Scanning {path}'.format(path=self.path))
-        os.path.walk(self.path, self.process_dir, None)
+        logger.info('Scanning {path}'.format(path=self.path))
+        for root, dirs, files in os.walk(self.path):
+            self.process_dir(None, root, files)
 
     def process_dir(self, args, dirname, filenames):
         """ callback for each directory encourted by os.path.walk.
@@ -61,7 +62,7 @@ class MediaDirWalker(object):
 
                         # If we found the image URL, then download the image.
                         if image_url:
-                            logger.info(u'Downloading album cover image for "{artist_name} - {album_name}"'.format(artist_name=artist_name, album_name=album_name))
+                            logger.info('Downloading album cover image for "{artist_name} - {album_name}"'.format(artist_name=artist_name, album_name=album_name))
                             self.download_image(dirname, image_url)
 
     def check_cover_image_existence(self, dirname):
@@ -78,10 +79,10 @@ class MediaDirWalker(object):
         try:
             downloader = LastFMDownloader(album_name, artist_name) # Set downloader type to be LastFM
             image_url = downloader.search_for_image() # Search for cover image, return URL to download it
-        except KeyboardInterrupt,e:
+        except KeyboardInterrupt as e:
             raise
-        except Exception,e:
-            logger.error(u'SOMETHING VERY BAD HAPPENED during processing of "{artist_name} - {album_name}"'.format(artist_name=artist_name, album_name=album_name))
+        except Exception as e:
+            logger.error('SOMETHING VERY BAD HAPPENED during processing of "{artist_name} - {album_name}", {e}'.format(artist_name=artist_name, album_name=album_namei, e=e))
         return image_url
 
     def download_image(self, dirname, image_url):
@@ -120,7 +121,7 @@ class MediaDirWalker(object):
     def do_download(self, dirname, image_url, cover_name):
         """ Download album cover art and save as cover.(png|jpg|gif|tiff|svg)"""
 
-        image_data = urllib.urlopen(image_url).read()
-        f = open(os.path.join(dirname, cover_name), 'w')
+        image_data = urllib.request.urlopen(image_url).read()
+        f = open(os.path.join(dirname, cover_name), 'wb')
         f.write(image_data)
         f.close()

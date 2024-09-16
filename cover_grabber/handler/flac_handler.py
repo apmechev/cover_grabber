@@ -21,25 +21,36 @@ from cover_grabber.logging.config import logger
 
 class FLACHandler(Handler):
     def __init__(self, dirname, filenames):
-        """ Initialize FLAC Handler """
-        super(FLACHandler, self).__init__(dirname, filenames)
-        # Create audio_files list from the filenames list by filtering for only flac
-        self.audio_files = [os.path.join(dirname, file) for file in filenames if ".flac" in file]
+        """Initialize FLAC Handler"""
+        super().__init__(dirname, filenames)
+        self.audio_files = [
+            os.path.join(dirname, filename)
+            for filename in filenames
+            if filename.lower().endswith('.flac')
+        ]
 
     def get_album_and_artist(self):
-        """ Return FLAC tags for album and artist"""
+        """Return FLAC tags for album and artist"""
 
         self.audio_files.sort()
 
-        for file in self.audio_files:
+        for filepath in self.audio_files:
             try:
-                tags = FLAC(file)
+                tags = FLAC(filepath)
                 if tags:
-                    if "album" in tags.keys() and "artist" in tags.keys():
-                        logger.debug(u'album -> {album}, artist -> {artist}'.format(album=tags["album"][0], artist=tags["artist"][0]))
-                        return (tags["album"][0], tags["artist"][0])
-                        break # If we found ID3 tag info from a file, no reason to query the rest in a directory.  
+                    if (
+                        "album" in tags and tags["album"]
+                        and "artist" in tags and tags["artist"]
+                    ):
+                        album = tags["album"][0]
+                        artist = tags["artist"][0]
+                        logger.debug(
+                            'album -> {album}, artist -> {artist}'.format(
+                                album=album, artist=artist
+                            )
+                        )
+                        return album, artist
             except mutagen.flac.FLACNoHeaderError:
-                logger.error(u'No FLAC Header data')
+                logger.error('No FLAC Header data in file {}'.format(filepath))
                 continue
-        return (None, None)
+        return None, None
