@@ -21,3 +21,6 @@ dist
 ChangeLog
 venv
 .venv
+
+#secrets should not be committed
+.env

@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import urllib.request
 import urllib.parse
 try:
@@ -26,7 +27,9 @@ from cover_grabber.logging.config import logger
 class LastFMDownloader(object):
     def __init__(self, album_name, artist_name):
         """Initializes LastFM Downloader"""
-        self.LASTFM_API_KEY = "a42ead6d2dcc2938bec2cda08a03b519"
+        self.LASTFM_API_KEY = os.environ.get("LASTFM_API_KEY")
+        if not self.LASTFM_API_KEY:
+            raise ValueError("LASTFM_API_KEY environment variable not set. Add it to .env and source it")
         self.LASTFM_URL = (
             "http://ws.audioscrobbler.com/2.0/?method=album.search&album={album_name}&api_key="
             + self.LASTFM_API_KEY
