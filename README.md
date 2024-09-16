@@ -13,7 +13,7 @@ https://sourceforge.net/projects/covergrabber/
 
 ## Source Code
 
-https://github.com/toozej/cover_grabber which is a fork of https://github.com/markojaadam/cover_grabber which is a fork of https://github.com/thedonvaughn/cover_grabber
+https://github.com/apmechev/cover_grabber which is a fork of https://github.com/toozej/cover_grabber which is a fork of https://github.com/markojaadam/cover_grabber which is a fork of https://github.com/thedonvaughn/cover_grabber
 
 ## Requirements
 * Python
